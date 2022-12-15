@@ -67,6 +67,18 @@ function randomImg() {
     let randomImg = slide2[randomSlider];
     randomImg.classList.toggle('active');
 }
+// -------------------------FONCTION POUR AFFICHER L'IMAGE SELECTIONNER AVEC LES PUCES ---------------------
+
+function displayImage(index) {
+    let image = slide2[index];
+    let current = document.querySelector('.active');
+    // je vérifie si l'image cliqué n'est pas celle qui est déjà affiché si oui rien ne se passe sinon je lui met la classe active 
+    if (image === current) {
+        return;
+    }
+    image.classList.toggle('active');
+    current.classList.remove('active');
+}
 
 
 /*************************************************************************************************/
@@ -102,17 +114,25 @@ document.onkeydown = function (event) {
 };
 
 // =============================== CREATION DE LA LISTE ET DES PUCES  ===============================
+
 let list = document.createElement("ul");
 list.classList.add("slider-dots");
 for (let i = 0; i < slide2.length; i++) {
     let puce = document.createElement("li");
-    // puce.addEventListener("click", function () {
-    // });
     list.appendChild(puce);
 }
+// =============================== EVENEMENT SUR LA LISTE DE PUCE  ===============================
+
+list.addEventListener('click', function (e) {
+    // merci OpenAi
+    if (e.target.tagName === 'LI') {
+
+        let index = Array.prototype.indexOf.call(list.children, e.target);
+        displayImage(index);
+    }
+});
+
 navBar.appendChild(list);
-
-
 
 
 
