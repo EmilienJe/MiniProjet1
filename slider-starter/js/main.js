@@ -1,98 +1,77 @@
-'use strict';   // Mode strict du JavaScript
+// 'use strict';   // Mode strict du JavaScript
 
-/*************************************************************************************************/
-/* ****************************************** DONNEES ****************************************** */
-/*************************************************************************************************/
+// /*************************************************************************************************/
+// /* ****************************************** DONNEES ****************************************** */
+// /*************************************************************************************************/
+
 
 const buttonRandom = document.getElementById("random");
 const buttonPlayPause = document.getElementById("play-pause");
 const navPrev = document.getElementById('prev');
 const navNext = document.getElementById("next");
-const slide2 = document.querySelectorAll(".slider-figure");
+const slides = document.querySelectorAll(".slider-figure");
 const navBar = document.querySelector('.slider-navigation');
 
-console.log(navBar);
-
-
-let sliderStart = 0;
+let indexDisplay = 0;
 let player = false;
 let interval;
 
 
+// /*************************************************************************************************/
+// /* ***************************************** FONCTIONS ***************************************** */
+// /*************************************************************************************************/
 
 
-/*************************************************************************************************/
-/* ***************************************** FONCTIONS ***************************************** */
-/*************************************************************************************************/
+// =========================================== FONCTION QUI PERMET L'AFFICHAGE ===================================
 
-// -------------------------FONCTION POUR PASSER A L'IMAGE SUIVANTE---------------------
-function nextImg() {
-    let prevslider = slide2[sliderStart];
-    prevslider.classList.toggle('active');
-    sliderStart++;
-    if (sliderStart >= slide2.length) {
-        sliderStart = 0;
+function showImage(index) {
+    slides[indexDisplay].classList.toggle('active');
+    indexDisplay = index;
+    if (indexDisplay >= slides.length) {
+        indexDisplay = 0;
+    } else if (indexDisplay < 0) {
+        indexDisplay = slides.length - 1;
     }
-    let nextslider = slide2[sliderStart];
-    nextslider.classList.toggle('active');
-};
-// -------------------------FONCTION POUR PASSER A L'IMAGE PRECEDENTE---------------------
-function prevImg() {
-    let prevslider = slide2[sliderStart];
-    prevslider.classList.toggle('active');
-    sliderStart--;
-    if (sliderStart < 0) {
-        sliderStart = slide2.length - 1;
-    }
-    let nextslider = slide2[sliderStart];
-    nextslider.classList.toggle('active');
-};
-
-// -------------------------FONCTION POUR FAIRE DEFILER MON CARROUSEL---------------------
+    slides[indexDisplay].classList.toggle('active');
+}
+// =========================================== FONCTION POUR FAIRE DEFILER MON CARROUSEL ==============================
 function playPause() {
     if (player) {
         clearInterval(interval);
         player = false;
     } else {
-        interval = setInterval(nextImg, 1000);
+        interval = setInterval(function () {
+            showImage(indexDisplay + 1);
+        }, 1000);
         player = true;
     }
 }
-// -------------------------FONCTION POUR AVOIR UNE IMAGE ALEATOIRE DU CARROUSEL---------------------
-function randomImg() {
-    let prevslider = slide2[sliderStart];
-    prevslider.classList.toggle('active');
-    let randomSlider = Math.floor(Math.random() * slide2.length);
-    sliderStart = randomSlider;
-    let randomImg = slide2[randomSlider];
-    randomImg.classList.toggle('active');
-}
-// -------------------------FONCTION POUR AFFICHER L'IMAGE SELECTIONNER AVEC LES PUCES ---------------------
-
-function displayImage(index) {
-    let image = slide2[index];
-    let current = document.querySelector('.active');
-    // je vérifie si l'image cliqué n'est pas celle qui est déjà affiché si oui rien ne se passe sinon je lui met la classe active 
-    if (image === current) {
-        return;
-    }
-    image.classList.toggle('active');
-    current.classList.remove('active');
+// =========================================== FONCTION POUR AVOIR UNE IMAGE ALEATOIRE DU CARROUSEL ==============================
+function showRandom() {
+    slides[indexDisplay].classList.toggle('active');
+    indexDisplay = Math.floor(Math.random() * slides.length);
+    slides[indexDisplay].classList.toggle('active');
 }
 
+// /*************************************************************************************************/
+// /* ************************************** CODE PRINCIPAL *************************************** */
+// /*************************************************************************************************/
 
-/*************************************************************************************************/
-/* ************************************** CODE PRINCIPAL *************************************** */
-/*************************************************************************************************/
 
+// // =============================== EVENEMENT AVEC LA SOURIS ===============================
 
-// =============================== EVENEMENT AVEC LA SOURIS ===============================
-navNext.addEventListener('click', nextImg);
-navPrev.addEventListener('click', prevImg);
+navNext.addEventListener('click', function () {
+    showImage(indexDisplay + 1);
+});
+navPrev.addEventListener('click', function () {
+    showImage(indexDisplay - 1);
+});
+
 buttonPlayPause.addEventListener('click', playPause);
-buttonRandom.addEventListener('click', randomImg);
+buttonRandom.addEventListener('click', showRandom);
 
-// =============================== EVENEMENT SUR LE CLAVIER ===============================
+
+// // =============================== EVENEMENT SUR LE CLAVIER ===============================
 
 document.onkeydown = function (event) {
     let key = event.code;
@@ -101,39 +80,47 @@ document.onkeydown = function (event) {
             playPause();
             break;
         case 'ArrowLeft':
-            prevImg();
+            showImage(indexDisplay + 1);
             break;
         case 'ArrowRight':
-            nextImg();
+            showImage(indexDisplay + -1);
             break;
         case 'Enter':
-            randomImg();
+            showRandom();
             break;
-
     }
 };
 
-// =============================== CREATION DE LA LISTE ET DES PUCES  ===============================
 
-let list = document.createElement("ul");
-list.classList.add("slider-dots");
-for (let i = 0; i < slide2.length; i++) {
-    let puce = document.createElement("li");
-    list.appendChild(puce);
+// // =============================== CREATION DE LA LISTE ET DES PUCES  ===============================
+
+let listPuces = document.createElement('ul');
+listPuces.classList.add("slider-dots");
+for (let i = 0; i < slides.length; i++) {
+    let puce = document.createElement('li');
+    puce.addEventListener('click', function () {
+        showImage(i);
+    });
+    listPuces.appendChild(puce);
 }
-// =============================== EVENEMENT SUR LA LISTE DE PUCE  ===============================
 
-list.addEventListener('click', function (e) {
+navBar.appendChild(listPuces);
+
+// // =============================== EVENEMENT SUR LA LISTE DE PUCE  ===============================
+
+listPuces.addEventListener('click', function (e) {
     // merci OpenAi
     if (e.target.tagName === 'LI') {
-
-        let index = Array.prototype.indexOf.call(list.children, e.target);
-        displayImage(index);
+        let index = Array.prototype.indexOf.call(listPuces.children, e.target);
+        e.target.classList.add("selected");
+        console.log(e.target);
+        for (let i = 0; i < listPuces.children.length; i++) {
+            if (i !== index) {
+                listPuces.children[i].classList.remove("selected");
+            }
+        }
     }
 });
-
-navBar.appendChild(list);
-
 
 
 /**
@@ -189,3 +176,13 @@ navBar.appendChild(list);
 //     "shiftKey": false,
 //     "repeat": false
 //    }
+
+
+
+
+
+
+
+
+
+
