@@ -36,12 +36,6 @@ function showImage(index) {
     updatePuces(indexDisplay);
 }
 
-function showRandom() {
-    slides[indexDisplay].classList.toggle('active');
-    let randomIndex = Math.floor(Math.random() * slides.length);
-    showImage(randomIndex);
-
-}
 
 // =========================================== FONCTION POUR FAIRE DEFILER MON CARROUSEL ==============================
 function playPause() {
@@ -58,9 +52,12 @@ function playPause() {
 // =========================================== FONCTION POUR AVOIR UNE IMAGE ALEATOIRE DU CARROUSEL ==============================
 function showRandom() {
     slides[indexDisplay].classList.toggle('active');
-    indexDisplay = Math.floor(Math.random() * slides.length);
+    let randomIndex = Math.floor(Math.random() * slides.length);
     slides[indexDisplay].classList.toggle('active');
+    showImage(randomIndex);
+
 }
+
 // =========================================== FONCTION POUR INDEXER MES PUCES ==============================
 function updatePuces(index) {
     document.querySelectorAll('.slider-dots li').forEach(function (puce) {
@@ -98,10 +95,10 @@ document.onkeydown = function (event) {
             playPause();
             break;
         case 'ArrowLeft':
-            showImage(indexDisplay + 1);
+            showImage(indexDisplay + -1);
             break;
         case 'ArrowRight':
-            showImage(indexDisplay + -1);
+            showImage(indexDisplay + 1);
             break;
         case 'Enter':
             showRandom();
