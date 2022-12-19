@@ -111,7 +111,7 @@
   cursor: pointer;
 }
 
-.selected {
-  background-color: black !important;
+.slider-dots li.selected {
+  background-color: black;
 
 }
